@@ -7,13 +7,15 @@ simple command line interface
 features
 --------
 
-* simple command line interface
-* add commands
+* command line loop
+* map commands to callbacks 
+  `void example_callback(char* line)` 
 
 wishlist
 --------
 
-* parameter/args parsing
+* parse parameter/args
+* support keys (escape sequences, arrows, tabs)
 * history (readline features)
 
 
@@ -21,7 +23,7 @@ example
 -------
 
 ~~~
-include "clibar.h"
+#include "clibar.h"
 
 void hello (char *line)
 {
