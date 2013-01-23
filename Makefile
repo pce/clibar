@@ -15,4 +15,10 @@ all:
 clean:
 	rm -f $(EXE) *.o
 
+memcheck:
+	valgrind --tool=memcheck ./$(EXE)
+
+fullmemcheck:
+	valgrind --leak-check=full --show-reachable=yes --tool=memcheck ./$(EXE)
+
 

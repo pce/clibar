@@ -1,13 +1,12 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-/*
-#define DEBUG
-*/
-#ifndef CLI_PROMPT
-#define CLI_PROMPT "cli"
-#endif
+
+// #define DEBUG
+
+#define CLI_PROMPT "clibar"
 
 #define MAX_CMD_LENGTH 64
 
@@ -17,9 +16,18 @@
 #define trace(...) printf(__VA_ARGS__);
 #endif
 
+#define xsprintf(str, ...) {                    \
+    char* tmp_str = (str);                      \
+    int size = asprintf(&(str), __VA_ARGS__);   \
+    if (size == -1) {                           \
+        perror("xsprintf");                     \
+        exit(2);                                \
+    }                                           \
+    free(tmp_str);                              \
+}
+
 
 typedef void (*cliFunc) (char* text);
-
 
 void listCliCmds(char* line);
 void quitCmd(char* line);
@@ -29,13 +37,18 @@ typedef struct {
     cliFunc callback;
 } CliCmd;
 
-
 CliCmd cliCmds[] = {
     { .cmd="help", .callback=listCliCmds },
     { "?", listCliCmds },
     { "quit", quitCmd},
     { NULL, NULL}
 };
+
+typedef struct {
+    char *prompt;
+} CliConfig;
+
+CliConfig cliConfig;
 
 
 void cliAddCmd (CliCmd cmd)
@@ -66,38 +79,31 @@ void quitCmd(char* line)
 }
 
 
+void cliSetPrompt(char* prompt)
+{
+    cliConfig.prompt = prompt;
+    trace("[cliSetPrompt] cliConfig.prompt: %s\n", cliConfig.prompt);
+}
+
 char* cliReadLine()
 {
-    char *wp = NULL;
-    char *buf = NULL;
-    unsigned size = 0, filled = 0;
+    char *line = NULL;
     char c;
 
     while(1) {
-        if(size == filled) {
-            void *tmp;
-            tmp = buf;
-            size += 64;
-            /* trace("[FUNC:cliReadLine] enlarging buffer to %d\n", size); */
-            if(!(buf = realloc(buf, size * sizeof(char)))) {
-                free(tmp);
-                perror("realloc");
-                exit(2);
-            }
-            wp = buf + filled;
-        }
-        filled++;
         c = (char)getchar();
         if (c == '\n') {
-            *wp++ = '\0';
             break;
         } else {
             trace("%c\n", c);
-            *wp++ = c;
+            if (line == NULL) {
+                xsprintf(line, "%c", c);
+            } else {
+                xsprintf(line, "%s%c", line, c);
+            }
         }
     }
-    /* trace("[FUNC:cliReadLine] allocated %d bytes read %d chars\n", size, filled); */
-    return buf;
+    return line;
 }
 
 
@@ -108,7 +114,7 @@ void cliPopCmdOfLine(char** cmd, char* line)
     strncpy(tmpstr, line, sizeof tmpstr);
     ptr = strtok(tmpstr, " ;");
     if (ptr)
-        ; /*trace("%s", ptr); */
+        ;
     else
         return;
     *cmd = (char *)malloc(strlen(ptr)+1);
@@ -121,14 +127,22 @@ int cliLoop()
 {
     int ret = 1;
     int i = 0;
-    char *line = "";
-    char *cmd;
+    char *line = NULL;
+    char *cmd = NULL;
+
+    trace("cliConfig.prompt: %s\n", cliConfig.prompt);
+    if (cliConfig.prompt == NULL) {
+        cliConfig.prompt = CLI_PROMPT;
+        trace("cliConfig.prompt: %s\n", cliConfig.prompt);
+    }
+
     while(1) {
-        printf("%s> ", CLI_PROMPT);
+        printf("%s> ", cliConfig.prompt);
         /* fflush(stdout); */
         line = cliReadLine();
+        if (line == NULL) continue;
         cliPopCmdOfLine(&cmd, line);
-        /* trace("$line:%s;\n", line); */
+        trace("line: %s\n", line);
         if (strcmp(line, "") == 0) continue;
         for (i = 0; ; i++) {
             if (!cliCmds[i].callback) {
@@ -140,8 +154,9 @@ int cliLoop()
                 break;
             }
         }
+        free(cmd);
+        free(line);
     }
-    free(line);
     return ret;
 }
 
