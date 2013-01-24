@@ -3,7 +3,7 @@ MAIN= example.c
 CC = gcc
 CFLAGS = -Wall -W -o
 #CFLAGS = -Wall -W -Os -g -o
-LIB = clibar.o
+LIBS = 
 DEFS=-D_GNU_SOURCE=1
 #DEFS= -D_BSD_SOURCE=1
 OBJECTS=clibar.o
@@ -15,7 +15,7 @@ $(OBJECTS):
 	$(CC) -c clibar.c
 
 all: clibar.c example.c
-	$(CC) $(DEFS) $(MAIN) $(CFLAGS) $(EXE) $(LIB)
+	$(CC) $(DEFS) $(MAIN) $(CFLAGS) $(EXE) $(OBJECTS) $(LIBS)
 
 clean:
 	rm -f $(EXE) *.o
