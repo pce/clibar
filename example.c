@@ -8,8 +8,11 @@
 void hello (char *line)
 {
     trace("%s\n", line);
-    cliSetPrompt("hello");
-    printf("%s\n", "World!");
+    cliSetPrompt("foobar");
+    // if strpos
+    char *p = strstr(line, "foo");
+    if (p)
+        printf("%s\n", "bar");
 }
 
 int main(void)
