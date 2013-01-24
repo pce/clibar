@@ -17,13 +17,13 @@
 #endif
 
 #define xsprintf(str, ...) {                    \
-    char* tmp_str = (str);                      \
+    char* tmpstr = (str);                       \
     int size = asprintf(&(str), __VA_ARGS__);   \
     if (size == -1) {                           \
         perror("xsprintf");                     \
         exit(2);                                \
     }                                           \
-    free(tmp_str);                              \
+    free(tmpstr);                               \
 }
 
 

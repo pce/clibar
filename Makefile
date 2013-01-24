@@ -3,14 +3,15 @@ CC = gcc
 CFLAGS = -Wall -g 
 #LIBS = `pkg-config --cflags --libs gtk+-2.0` 
 LIBS =
-FILES = cli.c
+FILES = example.c
 OBJECTS=
 
 
 $(EXE): $(OBJECTS)
 
+#example
 all: 
-	$(MAKE) $(FILES) -o $(EXE) $(LIBS)
+	$(CC) $(CFLAGS) $(FILES) -o $(EXE) $(LIBS)
 
 clean:
 	rm -f $(EXE) *.o
