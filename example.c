@@ -1,3 +1,7 @@
+#define _GNU_SOURCE 1
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "clibar.h"
 
@@ -8,7 +12,7 @@ void hello (char *line)
     printf("%s\n", "World!");
 }
 
-int main(int argc, char **argv)
+int main(void)
 {
     trace("cliConfig.prompt: %s\n", cliConfig.prompt);
     //cliSetPrompt("cli");

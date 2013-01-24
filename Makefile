@@ -1,17 +1,21 @@
 EXE = cli
+MAIN= example.c
 CC = gcc
-CFLAGS = -Wall -g 
-#LIBS = `pkg-config --cflags --libs gtk+-2.0` 
-LIBS =
-FILES = example.c
-OBJECTS=
-
+CFLAGS = -Wall -W -o
+#CFLAGS = -Wall -W -Os -g -o
+LIB = clibar.o
+DEFS=-D_GNU_SOURCE=1
+#DEFS= -D_BSD_SOURCE=1
+OBJECTS=clibar.o
 
 $(EXE): $(OBJECTS)
+	$(MAKE) all
 
-#example
-all: 
-	$(CC) $(CFLAGS) $(FILES) -o $(EXE) $(LIBS)
+$(OBJECTS): 
+	$(CC) -c clibar.c
+
+all: clibar.c example.c
+	$(CC) $(DEFS) $(MAIN) $(CFLAGS) $(EXE) $(LIB)
 
 clean:
 	rm -f $(EXE) *.o
@@ -21,5 +25,4 @@ memcheck:
 
 fullmemcheck:
 	valgrind --leak-check=full --show-reachable=yes --tool=memcheck ./$(EXE)
-
 
