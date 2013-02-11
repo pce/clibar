@@ -119,7 +119,7 @@ int cliLoop()
                 break;
             }
         }
-        free(cmd);
+        if (cmd) free(cmd);
         free(line);
     }
     return ret;
