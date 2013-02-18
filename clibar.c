@@ -78,10 +78,7 @@ void cliPopCmdOfLine(char** cmd, char* line)
     char *ptr;
     strncpy(tmpstr, line, sizeof tmpstr);
     ptr = strtok(tmpstr, " ;");
-    if (ptr)
-        ;
-    else
-        return;
+    if (ptr == NULL) return;
     *cmd = (char *)malloc(strlen(ptr)+1);
     (*cmd)[strlen(ptr)] = '\n';
     strcpy(*cmd, ptr);
@@ -108,7 +105,9 @@ int cliLoop()
         if (line == NULL) continue;
         cliPopCmdOfLine(&cmd, line);
         trace("line: %s\n", line);
-        if (strcmp(line, "") == 0) continue;
+        if (!cmd) continue;
+        if (strlen(line) == 0 ) continue;
+        /* if (strcmp(line, "") == 0) continue; */
         for (i = 0; ; i++) {
             if (!cliCmds[i].callback) {
                 printf("error: no such command\n");
