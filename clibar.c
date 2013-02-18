@@ -118,8 +118,8 @@ int cliLoop()
                 break;
             }
         }
-        if (cmd) free(cmd);
-        free(line);
+        if (cmd) xfree(cmd);
+        xfree(line);
     }
     return ret;
 }
