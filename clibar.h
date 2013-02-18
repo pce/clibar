@@ -23,6 +23,7 @@
     free(tmpstr);                               \
 }
 
+#define xfree(p) do { free(p); (p) = NULL; } while(0)
 
 typedef void (*cliFunc) (char* line);
 
