@@ -8,13 +8,13 @@
 #include "clibar.h"
 
 static CliCmd cliCmds[] = {
-    { .cmd="help", .callback=listCliCmds },
-    { "?", listCliCmds },
-    { "quit", quitCmd},
-    { NULL, NULL}
+    { .cmd="help", .callback=listCliCmds, .doc="list all Commands" },
+    { "?", listCliCmds, "list all Commands" },
+    { "quit", quitCmd, "quits this session"},
+    { NULL, NULL, NULL}
 };
 
-static CliConfig cliConfig;
+static CliState cliState;
 
 void cliAddCmd (CliCmd cmd)
 {
@@ -39,18 +39,17 @@ void listCliCmds(char *line)
 
 void quitCmd(char* line)
 {
-    // free
-    exit(EXIT_SUCCESS);
+    cliState.die = 1;
 }
 
 
 void cliSetPrompt(char* prompt)
 {
-    cliConfig.prompt = prompt;
-    trace("[cliSetPrompt] cliConfig.prompt: %s\n", cliConfig.prompt);
+    cliState.prompt = prompt;
+    trace("[cliSetPrompt] prompt: %s\n", cliState.prompt);
 }
 
-char* cliReadLine()
+char* cliReadChars()
 {
     char *line = NULL;
     char c;
@@ -72,18 +71,26 @@ char* cliReadLine()
 }
 
 
-void cliPopCmdOfLine(char** cmd, char* line)
+char* cliCmdOfLine(char* line)
 {
     char tmpstr[MAX_CMD_LENGTH];
     char *ptr;
     strncpy(tmpstr, line, sizeof tmpstr);
     ptr = strtok(tmpstr, " ;");
-    if (ptr == NULL) return;
-    *cmd = (char *)malloc(strlen(ptr)+1);
-    (*cmd)[strlen(ptr)] = '\n';
-    strcpy(*cmd, ptr);
+    if (ptr == NULL) return NULL;
+    char *cmd = (char *)malloc(strlen(ptr)+1);
+    cmd[strlen(ptr)] = '\n';
+    strcpy(cmd, ptr);
+    return cmd;
 }
 
+
+char* cliReadLine(char* prompt)
+{
+    cliState.prompt = prompt;
+    printf("%s> ", cliState.prompt);
+    return cliReadChars();
+}
 
 int cliLoop()
 {
@@ -92,21 +99,25 @@ int cliLoop()
     char *line = NULL;
     char *cmd = NULL;
 
-    trace("cliConfig.prompt: %s\n", cliConfig.prompt);
-    if (cliConfig.prompt == NULL) {
-        cliConfig.prompt = CLI_PROMPT;
-        trace("cliConfig.prompt: %s\n", cliConfig.prompt);
+    if (cliState.prompt == NULL) {
+        cliState.prompt = CLI_PROMPT;
+        trace("prompt: %s\n", cliState.prompt);
     }
 
     while(1) {
-        printf("%s> ", cliConfig.prompt);
+        printf("%s> ", cliState.prompt);
         /* fflush(stdout); */
-        line = cliReadLine();
+        line = cliReadChars();
         if (line == NULL) continue;
-        cliPopCmdOfLine(&cmd, line);
+        cmd = cliCmdOfLine(line);
         trace("line: %s\n", line);
-        if (!cmd) continue;
-        if (strlen(line) == 0 ) continue;
+        if (cmd == NULL) {
+            continue;
+        }
+        if (strlen(line) == 0 ) {
+            xfree(cmd);
+            continue;
+        }
         /* if (strcmp(line, "") == 0) continue; */
         for (i = 0; ; i++) {
             if (!cliCmds[i].callback) {
@@ -115,11 +126,15 @@ int cliLoop()
             }
             if (strcmp(cmd, cliCmds[i].cmd) == 0) {
                 cliCmds[i].callback(line);
+                // cliAddHistory(line);
                 break;
             }
         }
         if (cmd) xfree(cmd);
         xfree(line);
+        if (cliState.die) {
+            break;
+        }
     }
     return ret;
 }

@@ -5,21 +5,18 @@
 
 #include "clibar.h"
 
-void hello (char *line)
+void foo (char *line)
 {
     trace("%s\n", line);
     cliSetPrompt("foobar");
-    // if strpos
-    char *p = strstr(line, "foo");
+    char *p = strstr(line, "bar");
     if (p)
-        printf("%s\n", "bar");
+        printf("%s\n", "fee fie foe foo bar buz qux");
 }
 
 int main(void)
 {
-    trace("cliConfig.prompt: %s\n", cliConfig.prompt);
-    //cliSetPrompt("cli");
-    cliAddCmd((CliCmd){.cmd="hello", .callback=hello});
+    cliAddCmd((CliCmd){.cmd="foo", .callback=foo, .doc="foo bar magic"});
     int ret = cliLoop();
     return ret;
 }

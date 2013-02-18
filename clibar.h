@@ -34,17 +34,20 @@ void quitCmd(char* line);
 typedef struct {
     const char *cmd;
     cliFunc callback;
+    const char *doc;
 } CliCmd;
 
 typedef struct {
     char *prompt;
-} CliConfig;
+    int  die;
+} CliState;
 
 
 void cliAddCmd (CliCmd cmd);
 void cliSetPrompt(char* prompt);
-char* cliReadLine();
-void cliPopCmdOfLine(char** cmd, char* line);
+char* cliReadLine(char* prompt);
+char* cliReadChars();
+char* cliCmdOfLine(char* line);
 int cliLoop();
 
 #endif
