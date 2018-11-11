@@ -7,7 +7,7 @@
 
 #include "clibar.h"
 
-static CliCmd cliCmds[] = {
+CliCmd cliCmds[] = {
     { .cmd="help", .callback=listCliCmds, .doc="list all Commands" },
     { "?", listCliCmds, "list all Commands" },
     { "quit", quitCmd, "quits this session"},
@@ -15,6 +15,13 @@ static CliCmd cliCmds[] = {
 };
 
 static CliState cliState;
+
+
+/*
+CliCmd* CliCmds() {
+	return &cliCmds;
+}*/
+
 
 void cliAddCmd (CliCmd cmd)
 {

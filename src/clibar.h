@@ -42,6 +42,8 @@ typedef struct {
     int  die;
 } CliState;
 
+extern CliCmd cliCmds[];
+
 
 void cliAddCmd (CliCmd cmd);
 void cliSetPrompt(char* prompt);
@@ -49,6 +51,9 @@ char* cliReadLine(char* prompt);
 char* cliReadChars();
 char* cliCmdOfLine(char* line);
 int cliLoop();
+/* getter cliCmds 
+CliCmd* CliCmds(); 
+*/
 
 #endif
 
