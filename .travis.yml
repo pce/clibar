@@ -5,10 +5,9 @@ matrix:
     - os: osx
       compiler: clang
       osx_image: xcode7.3
-    - os: linux
-      dist: trusty
-      compiler: gcc
+#    - os: linux
+#      dist: trusty
+#      compiler: gcc
 
 script:
-  - cd test && make && ./a.out
-
+  - cd test && make test 

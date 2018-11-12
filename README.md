@@ -4,6 +4,9 @@ clibar
 simple command line interface 
 
 
+[![Build Status](https://travis-ci.com/pce/clibar.svg?branch=master)](https://travis-ci.com/pce/clibar.svg?branch=master)
+
+
 features
 --------
 
