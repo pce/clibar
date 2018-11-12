@@ -17,10 +17,10 @@ CliCmd cliCmds[] = {
 static CliState cliState;
 
 
-/*
+/* getter */
 CliCmd* CliCmds() {
-	return &cliCmds;
-}*/
+	return cliCmds;
+}
 
 
 void cliAddCmd (CliCmd cmd)

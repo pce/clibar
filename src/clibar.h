@@ -51,9 +51,9 @@ char* cliReadLine(char* prompt);
 char* cliReadChars();
 char* cliCmdOfLine(char* line);
 int cliLoop();
-/* getter cliCmds 
+// getter cliCmds 
 CliCmd* CliCmds(); 
-*/
+
 
 #endif
 
